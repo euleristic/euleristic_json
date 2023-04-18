@@ -3,7 +3,7 @@ A simple JSON tool for C++20.
 
 ## Documentation of the interface
 The interface lives entirely within the `euleristic` namespace, but its qualifier is omitted here for brevity.
-The tool is templated, allowing the user to specify with what C++ types to store JSON values. The full template parameter list looks like: `template <std::integral integer_type = int, std::floating_point floating_point_type = float, string_concept string_type = std::string>`, but for brevity this documentation will simply say `template <...>`. Currently (atleast until C++ provides further support to character encodings), `string_concept` must be either `std::string` or `std::wstring`.
+The tool is templated, allowing the user to specify with what C++ types to store JSON values. The full template parameter list looks like: `template <std::integral integer_type = int, std::floating_point floating_point_type = float, string_concept string_type = std::string>`, but for brevity this documentation will simply say `template <...>`. Currently (atleast until C++ provides further support to character encodings), `string_concept` must be either `std::string` or `std::wstring`. If the macro `EULERISTIC_JSON_COUT` is defined before the header is included, it may write messages to `std::cout`.
 ### `template <...> json::value_type<...> json::parse_file(const std::filesystem::path path)`
 Parses the JSON file at `path` and returns the `value_type` it evaluates to. Calls `parse_text`.
 ### `template <...> json::value_type<...> json::parse_text(const std::string_view source)`
