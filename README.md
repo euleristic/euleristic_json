@@ -1,5 +1,5 @@
 # euleristic_json
-A simple JSON tool for C++20
+A simple JSON tool for C++20.
 
 ## Documentation of the interface
 The interface lives entirely within the `euleristic` namespace, but its qualifier is omitted here for brevity.
@@ -11,6 +11,7 @@ Parses the source as JSON and returns the `value_type` it evaluates to.
 ### `template <...> void json::write_to_file(const value_type<...> value, const std::filesystem::path path)`
 Writes `value` to a file at `path` as JSON.
 ### `template <...> std::ostream& operator<<(std::ostream& stream, const value_type<...>& value)`
+Writes `value` to `stream` as JSON.
 ### `template <...> class json::value_type`
 A class which wraps a JSON value and represents its numbers with `integer_type` and/or `floating_point_type`, and its strings with `string_type`. It is through the interface of this class that the user may query JSON source or write it to file.
 #### Copy Constructors
@@ -28,9 +29,13 @@ If `this` holds a JSON object, return the JSON value of the kv-pair of key, as a
 ### `struct json::parsing_error`
 This struct is thrown if an error is encountered during parsing.
 #### `enum class json::parsing_error::type_t`
-An enum class which holds the type of the parsing error, which may be:
+An enum class which holds the type of the parsing error, which may be any of:
 `UNKNOWN_TOKEN`, `UNEXPECTED_TOKEN`, `UNEXPECTED_SOURCE_END`, `FILE_NOT_FOUND`, `FILE_READ_ERROR`, `INCORRECT_FILE_EXTENSION`, `ILLEGAL_CODE_POINT`, `BAD_REVERSE_SOLIDUS`, `INCORRECT_NUMBER_FORMAT`, `STRING_TYPE_TOO_NARROW`, `INTEGER_TYPE_TOO_NARROW` or ` FLOATING_POINT_TYPE_TOO_NARROW`.
 #### `enum class json::parsing_error::type_t json::parsing_error::type`
 The type of the parsing error instance.
 #### `std::optional<uint16> json::parsing_error::line, json::parsing_error::character`
 The line and character(ish) of the JSON source where the parsing error was encountered, if applicable.
+### `enum class json::format_error`
+This enum is thrown if a formatting error is encountered, and may be either: `ILLEGAL_CODE_POINT` or `CONVERSION_FAILURE`.
+### `enum class json::interface_misuse`
+This enum is thrown if the interface was used in an incorrect manner, and may any of: `INCORRECT_TYPE`, `INDEX_OUT_OF_RANGE` or `NO_SUCH_KEY`.
