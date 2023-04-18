@@ -17,7 +17,7 @@ A class which wraps a JSON value and represents its numbers with `integer_type` 
 #### Copy Constructors
 The class has a set of copy constructors which will interpret the given C++ representation of the value as a JSON value. An argument may be `std::map<string_type, json_value<...>>` or `std::unordered_map<string_type, json_value<...>>`, in which case it will be interpreted as a JSON object, `std::vector<json_value<...>>` or `std::array<json_value<...>>`, in which case it will be interpreted as a JSON array, `std::integral`, `std::floating_point`, `std::convertible_to<std::string>`, `bool` or `nullptr`.
 #### `[[nodiscard]] /*typename*/ json::value_type::as_*() const`
-The class has a set of methods of this format: `as_bool()`, which returns `true` or `false` if the held JSON value is either of these, `as_integer()`, `as_floating_point()` and `as_string()`, which returns the held value as its respective template argument, if the it is of that type, `as_range()`, which returns a `std::span<json_value<...>>` of the held JSON array, if it is an array, and `as_object(), which returns a `std::span<string_type, json_value<...>>` of the held JSON object, if it is an object.
+The class has a set of methods of this format: `as_bool()`, which returns `true` or `false` if the held JSON value is either of these, `as_integer()`, `as_floating_point()` and `as_string()`, which returns the held value as its respective template argument, if the it is of that type, `as_array()`, which returns a `std::span<json_value<...>>` of the held JSON array, if it is an array, and `as_object(), which returns a `std::span<string_type, json_value<...>>` of the held JSON object, if it is an object.
 #### `[[nodiscard]] bool json::value_type::is_null() const`
 Returns whether the held JSON value is null.
 #### `[[nodiscard]] bool operator bool() const`
@@ -26,6 +26,8 @@ Returns whether the held JSON value is null.
 If `this` holds a JSON array, return the JSON value at index as a `value_type`.
 #### `[[nodiscard]] const json_value<...>& json::value_type::operator[](const string_type& key)`
 If `this` holds a JSON object, return the JSON value of the kv-pair of key, as a `value_type`.
+### `[[nodiscard]] std::partial_ordering operator<=>(const json_value<...>& rhs, const json_value<...>& rhs)`
+If lhs and rhs hold the same JSON value type, and that type is number or string, provide comparison operators. For inter-type comparisons, just compare `as_*()` methods.
 ### `struct json::parsing_error`
 This struct is thrown if an error is encountered during parsing.
 #### `enum class json::parsing_error::type_t`
