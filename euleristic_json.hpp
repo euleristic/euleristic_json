@@ -1,4 +1,4 @@
-// Version 1.0.0
+// Version 1.0.1
 
 // Copyright(c) 2023 Valter Ottenvang
 // 
@@ -36,6 +36,7 @@
 #include <numeric>
 #include <ranges>
 #include <iterator>
+#include <compare>
 
 // #define EULERISTIC_JSON_COUT before including this file for run-time console output.
 #ifdef EULERISTIC_JSON_COUT
@@ -78,7 +79,8 @@ namespace euleristic::json {
 	enum class interface_misuse {
 		INCORRECT_TYPE,
 		INDEX_OUT_OF_RANGE,
-		NO_SUCH_KEY
+		NO_SUCH_KEY,
+		ILLEGAL_OPERAND
 	};
 
 	// Concepts
@@ -622,6 +624,8 @@ namespace euleristic::json {
 		friend value_type<I, F, S> parse_text(std::string_view);
 		template <std::integral I, std::floating_point F, string_concept S>
 		friend std::ostream& operator<<(std::ostream&, const value_type<I, F, S>&);
+		template <std::integral I, std::floating_point F, string_concept S>
+		friend std::partial_ordering operator<=>(const value_type<I, F, S>& lhs, const value_type<I, F, S>& rhs);
 
 		// Writes the value to the stream in JSON at indentation level depth.
 		void _write_to_ostream(std::ostream& stream, size_t depth = 0) const {
@@ -990,7 +994,7 @@ namespace euleristic::json {
 			return obj.at(key);
 		}
 
-		[[nodiscard]] operator bool() {
+		[[nodiscard]] operator bool() const {
 			return _value.has_value();
 		}
 
@@ -1032,7 +1036,7 @@ namespace euleristic::json {
 		}
 
 		// Returns the value of this as a view, if it is an array
-		[[nodiscard]] auto as_range() const {
+		[[nodiscard]] auto as_array() const {
 			if (_type != _type_t::ARRAY) {
 				throw interface_misuse::INCORRECT_TYPE;
 			}
@@ -1047,6 +1051,23 @@ namespace euleristic::json {
 			}
 			auto& obj = std::get<_object_alias>(*_value);
 			return std::span{ obj.cbegin(), obj.size() };
+		}
+	};
+
+	template <std::integral integer_type, std::floating_point floating_point_type, string_concept string_type>
+	[[nodiscard]] std::partial_ordering operator<=>(const value_type<integer_type, floating_point_type, string_type>& lhs,
+		const value_type<integer_type, floating_point_type, string_type>& rhs) {
+		if (lhs._type != rhs._type) {
+			throw interface_misuse::INCORRECT_TYPE;
+		}
+		switch (lhs._type) {
+		case value_type<integer_type, floating_point_type, string_type>::_type_t::NULL_VALUE:     throw interface_misuse::ILLEGAL_OPERAND;
+		case value_type<integer_type, floating_point_type, string_type>::_type_t::BOOLEAN:		  throw interface_misuse::ILLEGAL_OPERAND;
+		case value_type<integer_type, floating_point_type, string_type>::_type_t::OBJECT:         throw interface_misuse::ILLEGAL_OPERAND;
+		case value_type<integer_type, floating_point_type, string_type>::_type_t::ARRAY:		  throw interface_misuse::ILLEGAL_OPERAND;
+		case value_type<integer_type, floating_point_type, string_type>::_type_t::INTEGER:		  return lhs.as_integer() <=> rhs.as_integer();
+		case value_type<integer_type, floating_point_type, string_type>::_type_t::FLOATING_POINT: return lhs.as_floating_point() <=> rhs.as_floating_point();
+		case value_type<integer_type, floating_point_type, string_type>::_type_t::STRING:		  return lhs.as_string() <=> rhs.as_string();
 		}
 	};
 
