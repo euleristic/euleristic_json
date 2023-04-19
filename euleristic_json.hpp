@@ -1,4 +1,4 @@
-// Version 1.0.1
+// Version 1.0.2
 
 // Copyright(c) 2023 Valter Ottenvang
 // 
@@ -1076,7 +1076,7 @@ namespace euleristic::json {
 	[[nodiscard]] value_type<integer_type, floating_point_type, string_type> parse_text(const std::string_view source) {
 
 		if (source.empty()) {
-			PUSH_TO_COUT("Source was empty!");
+			PUSH_TO_COUT("Source was empty!\n");
 			throw parsing_error{ parsing_error::type_t::UNEXPECTED_SOURCE_END, {}, {} };
 		}
 
@@ -1100,14 +1100,14 @@ namespace euleristic::json {
 	template <std::integral integer_type = int, std::floating_point floating_point_type = float, string_concept string_type = std::string>
 	[[nodiscard]] value_type<integer_type, floating_point_type, string_type> parse_file(const std::filesystem::path path) {
 		if (path.extension() != ".json") {
-			PUSH_TO_COUT("Unexpected file extension of path: " << path << ", expected .json");
+			PUSH_TO_COUT("Unexpected file extension of path: " << path << ", expected .json\n");
 			throw parsing_error{ parsing_error::type_t::INCORRECT_FILE_EXTENSION, {}, {} };
 		}
 
 		std::error_code ec;
 
 		if (!std::filesystem::exists(path, ec)) {
-			PUSH_TO_COUT("No file found at path: " << path << "\nstd::filesystem::exists gave error code " << ec.value() << ':' << ec.message());
+			PUSH_TO_COUT("No file found at path: " << path << "\nstd::filesystem::exists gave error code " << ec.value() << ':' << ec.message() << '\n');
 			throw parsing_error{ parsing_error::type_t::FILE_NOT_FOUND, {}, {} };
 		};
 
@@ -1115,7 +1115,7 @@ namespace euleristic::json {
 		std::ifstream file(path);
 
 		if (!file.is_open()) {
-			PUSH_TO_COUT("Could not read file.");
+			PUSH_TO_COUT("Could not read file.\n");
 			throw parsing_error{ parsing_error::type_t::FILE_READ_ERROR, {}, {} };
 		}
 
