@@ -1,4 +1,4 @@
-// Version 1.0.2
+// Version 1.0.3
 
 // Copyright(c) 2023 Valter Ottenvang
 // 
@@ -303,9 +303,9 @@ namespace euleristic::json {
 		}
 
 		// Friends
-		template <std::integral I, std::floating_point F, string_concept S> 
+		template <std::integral I, std::floating_point F, string_concept S>
 		friend class value_type;
-		template <std::integral I, std::floating_point F, string_concept S> 
+		template <std::integral I, std::floating_point F, string_concept S>
 		friend value_type<I, F, S> parse_text(const std::string_view);
 	};
 
@@ -337,7 +337,7 @@ namespace euleristic::json {
 		// Check for control characters
 		auto ctrl_char = std::find_if(input.cbegin(), input.cend(), [](const char c) { return c <= 0x1F; });
 		if (ctrl_char != input.cend()) {
-			throw parsing_error{ parsing_error::type_t::ILLEGAL_CODE_POINT, line, character + static_cast<uint16_t>(ctrl_char - input.cbegin())};
+			throw parsing_error{ parsing_error::type_t::ILLEGAL_CODE_POINT, line, character + static_cast<uint16_t>(ctrl_char - input.cbegin()) };
 		}
 
 		// Set up variables
@@ -983,7 +983,7 @@ namespace euleristic::json {
 
 		// If this is an object, returns the value at key.
 		[[nodiscard]] const value_type<integer_type, floating_point_type, string_type>&
-			operator[](const string_type& key) const {
+			operator[](const std::convertible_to<string_type> auto& key) const {
 			if (_type != _type_t::OBJECT) {
 				throw interface_misuse::INCORRECT_TYPE;
 			}
