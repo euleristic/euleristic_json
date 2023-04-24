@@ -1,4 +1,4 @@
-// Version 1.0.3
+// Version 1.0.4
 
 // Copyright(c) 2023 Valter Ottenvang
 // 
@@ -1050,7 +1050,7 @@ namespace euleristic::json {
 				throw interface_misuse::INCORRECT_TYPE;
 			}
 			auto& obj = std::get<_object_alias>(*_value);
-			return std::span{ obj.cbegin(), obj.size() };
+			return std::unordered_map{ obj.cbegin(), obj.cend() };
 		}
 	};
 
